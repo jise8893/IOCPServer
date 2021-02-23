@@ -1,4 +1,5 @@
 ﻿#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
 #include <stdlib.h>
@@ -6,6 +7,8 @@
 #include <winsock2.h>
 #include <conio.h>
 #include <process.h>
+#include <map>
+
 #pragma comment(lib, "ws2_32.lib")
 
 
@@ -18,6 +21,7 @@
 #define SUBMIT 4
 void ErrorHandling(char* msg);
 int KeyControl();
+std::map<int ,std::pair<int,int>> userlist;
 
 void init() {
 	system("mode con cols=56 lines=20 | title GameStart");
@@ -109,22 +113,48 @@ void DrawMap() {
 		}
 		printf("\n");
 	}
+
 }
 DWORD __stdcall RecvFunc(SOCKET Clntsock) {
 
 	int strLen = 0;
+	
 	char msg[BUFSIZE];
-
 	while (true) {
 
 
 		strLen += recv(Clntsock, msg, BUFSIZE - 1, 0);
 		
 
-		msg[strLen] = '\0';
+		
+		char* usernum;
+		char* x;
+		char* y;
+		char* temp;
+		usernum=strtok_s(msg, ":", &temp);
+		x=strtok_s(NULL, ":", &temp);
+		y=strtok_s(NULL, ":", &temp);
+		int user;
+		int xpos;
+		int ypos;
+		user = atoi(usernum);
+		xpos = atoi(x);
+		ypos = atoi(y);
 
-		printf("%s\n", msg);
-		memset(msg, 0, BUFSIZE);
+		for (auto itr = userlist.begin(); itr!= userlist.end(); itr++) {
+			if (itr->first == user)
+			{
+				gotoxy(itr->second.first, itr->second.second);
+				printf(" ");
+				gotoxy(xpos, ypos);
+				printf("0");
+				userlist.erase(itr);
+				break;
+			}
+		}
+		
+		userlist.insert(std::make_pair(user,std::make_pair(xpos, ypos)));
+
 	}
 }
 void ConnectGame() {
@@ -135,7 +165,7 @@ void ConnectGame() {
 
 	SOCKADDR_IN servAddr;
 
-	char msg[BUFSIZE];
+
 
 	int strLen, readLen;
 	
@@ -189,36 +219,47 @@ void ConnectGame() {
 
 	_beginthreadex(NULL, 0, (_beginthreadex_proc_type)RecvFunc,(void *)hSocket, 0, NULL);
 
-	while (1)
-
-	{
-
-		fputs("Input Message(Q to quit): ", stdout);
-
-		fgets(msg, BUFSIZE, stdin);
-
-		if (!strcmp(msg, "q\n") || !strcmp(msg, "Q\n"))
-
-			break;
+	int x = 4;
+	int y = 11;
 
 
 
-		strLen = strlen(msg);
 
-		readLen = 0;
-
-		while (1)
-
-		{
-			send(hSocket, msg, strLen, 0);
-			
-
-				break;
-
+		while (true) {
+				char msg[30];
+				int key = KeyControl();
+				switch (key)
+				{
+				case UP:
+					y--;
+					sprintf(msg, "%d:%d", x, y);
+					strLen = strlen(msg);
+					send(hSocket, msg, strLen, 0);
+					break;
+				case DOWN:
+					y++;
+					sprintf(msg, "%d:%d", x, y);
+					strLen = strlen(msg);
+					send(hSocket, msg, strLen, 0);
+					break;
+				case RIGHT:
+					x++;
+					sprintf(msg, "%d:%d", x, y);
+					strLen = strlen(msg);
+					send(hSocket, msg, strLen, 0);
+					break;
+				case LEFT:
+					x--;
+					sprintf(msg, "%d:%d", x, y);
+					strLen = strlen(msg);
+					send(hSocket, msg, strLen, 0);
+					break;
+				
+				}
+				
 		}
-		
 
-	}
+	
 
 
 
