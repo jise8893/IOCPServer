@@ -62,7 +62,11 @@ DWORD __stdcall EchoThreadMain(LPVOID CompltetionPortIO)
                  
             }
             ul.unlock();
-        
+
+       
+            printf("buffer:%s\n", handleInfo->buffer);
+            printf_s("[INFO]  WSASEND ����\n");
+
             handleInfo = new BufferInfo();
             memset(&(handleInfo->overlapped), 0, sizeof(OVERLAPPED));
             handleInfo->wsabuf.len = BUF_SIZE;
