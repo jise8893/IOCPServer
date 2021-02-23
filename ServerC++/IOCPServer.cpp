@@ -19,7 +19,7 @@ DWORD __stdcall EchoThreadMain(LPVOID CompltetionPortIO)
             auto itr = find(userlist.begin(), userlist.end(), ioInfo->hClntSock);
             userlist.erase(itr);
             ul.unlock();
-            printf_s("[INFO]  Socket() ���� ������\n");
+            printf_s("[INFO]  Socket() Failed\n");
             delete handleInfo;
             continue;
         }
@@ -42,16 +42,17 @@ DWORD __stdcall EchoThreadMain(LPVOID CompltetionPortIO)
             msg[bytesTrans] = '\0';
             printf("buffer:%s\n",msg);
             
-            printf_s("[INFO]  WSASEND ����\n");
+            printf_s("[INFO]  WSASEND success\n");
             
             ul.lock();
-
+            
             for (auto itr = userlist.begin(); itr != userlist.end(); itr++) {
                  handleInfo = new BufferInfo();
                  memset(&(handleInfo->overlapped), 0, sizeof(OVERLAPPED));
                  int len = strlen(msg);
-                 handleInfo->wsabuf.len = len;
-                 strncpy_s(handleInfo->buffer, msg,BUF_SIZE);
+                 handleInfo->wsabuf.len = len+10;
+                 sprintf_s(handleInfo->buffer,1024,"%d:%s", socket,msg);
+                 
                  handleInfo->wsabuf.buf = handleInfo->buffer;
                  handleInfo->rwMode = WRITE;
 

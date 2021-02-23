@@ -121,9 +121,9 @@ DWORD __stdcall RecvFunc(SOCKET Clntsock) {
 		strLen += recv(Clntsock, msg, BUFSIZE - 1, 0);
 		
 
-		msg[strLen] = 0;
+		msg[strLen] = '\0';
 
-		printf("Message from server: %s\n", msg);
+		printf("%s\n", msg);
 		memset(msg, 0, BUFSIZE);
 	}
 }
