@@ -1,6 +1,7 @@
 #include "Listener.h"
 #define SERVER_PORT 8000
-
+extern std::mutex ul;
+extern std::vector<SOCKET> userlist;
 void Listener::Init()
 {
 	int nResult;
@@ -55,6 +56,10 @@ void Listener::RegisterAccept()
 			printf_s("[ERROR] Accept 실패");
 			return;
 		}
+		ul.lock();
+		userlist.push_back(hClntSock);
+		ul.unlock();
+
 		ioInfo = new SocketInfo();
 		ioInfo->hClntSock = hClntSock;
 		memcpy(&(ioInfo->clntAdr), &clntAdr, addrLen);
@@ -67,7 +72,6 @@ void Listener::RegisterAccept()
 		handleInfo->wsabuf.buf = handleInfo->buffer;
 		nResult = WSARecv(ioInfo->hClntSock, &(handleInfo->wsabuf), 1, (LPDWORD)&recvBytes, (LPDWORD)&flags, &(handleInfo->overlapped), NULL);
 		if (nResult == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
-			printf_s("[ERROR] IO Pending 실패");
 			printf_s("[ERROR] IO Pending 실패 :%d", WSAGetLastError());
 			return;
 		}

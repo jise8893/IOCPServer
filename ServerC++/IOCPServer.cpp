@@ -1,4 +1,7 @@
 #include "IOCPServer.h"
+#include "Listener.h"
+extern std::mutex ul;
+extern std::vector<SOCKET> userlist;
 
 DWORD __stdcall EchoThreadMain(LPVOID CompltetionPortIO)
 {
@@ -12,8 +15,12 @@ DWORD __stdcall EchoThreadMain(LPVOID CompltetionPortIO)
     while (1) {
         if (!GetQueuedCompletionStatus(hComport, &bytesTrans, (PULONG_PTR)&ioInfo, (LPOVERLAPPED*)&handleInfo, INFINITE) && bytesTrans == 0)
         {
+            ul.lock();
+            auto itr = find(userlist.begin(), userlist.end(), ioInfo->hClntSock);
+            userlist.erase(itr);
+            ul.unlock();
             printf_s("[INFO]  Socket() 접속 끊어짐\n");
-            free(handleInfo);
+            delete handleInfo;
             continue;
         }
         socket = ioInfo->hClntSock;
@@ -23,17 +30,23 @@ DWORD __stdcall EchoThreadMain(LPVOID CompltetionPortIO)
             if (bytesTrans == 0)
             {
                 closesocket(socket);
-                free(handleInfo);
-                free(ioInfo);
+                delete handleInfo;
+                delete ioInfo;
                 continue;
             }
             memset(&(handleInfo->overlapped), 0, sizeof(OVERLAPPED));
             handleInfo->wsabuf.len = bytesTrans;
             handleInfo->rwMode = WRITE;
-            int nResult=WSASend(socket, &(handleInfo->wsabuf), 1, NULL, 0, &(handleInfo->overlapped), NULL);
-            if (nResult == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
-                printf_s("[ERROR]  WSASEND 실패\n");
+            int nResult = 0;
+            ul.lock();
+            for (auto itr = userlist.begin(); itr != userlist.end(); itr++) {
+                 nResult = WSASend(*itr, &(handleInfo->wsabuf), 1, NULL, 0, &(handleInfo->overlapped), NULL);
+                 if (nResult == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
+                     printf_s("[ERROR]  WSASEND 실패\n");
+                 }
             }
+            ul.unlock();
+            printf("buffer:%s\n", handleInfo->buffer);
             printf_s("[INFO]  WSASEND 성공\n");
             handleInfo = new BufferInfo();
             memset(&(handleInfo->overlapped), 0, sizeof(OVERLAPPED));
@@ -44,8 +57,8 @@ DWORD __stdcall EchoThreadMain(LPVOID CompltetionPortIO)
 
         }
         else {
-            puts("message sned!");
-            free(handleInfo);
+            puts("message send!");
+            delete handleInfo;
         }
     }
     return 0;

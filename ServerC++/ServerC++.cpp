@@ -3,9 +3,12 @@
 
 #include "IOCPServer.h"
 #include "Listener.h"
+std::mutex ul;
+std::vector<SOCKET> userlist;
 int main()
 {
     Listener listener;
     listener.Init();
+    
 }
 
