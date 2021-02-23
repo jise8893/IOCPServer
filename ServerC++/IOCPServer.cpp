@@ -44,7 +44,7 @@ DWORD __stdcall EchoThreadMain(LPVOID CompltetionPortIO)
 
         }
         else {
-            puts("message sned!");
+            puts("message send!");
             free(handleInfo);
         }
     }
