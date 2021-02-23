@@ -1,4 +1,4 @@
-#include "IOCPServer.h"
+ï»¿#include "IOCPServer.h"
 #include "Listener.h"
 extern std::mutex ul;
 extern std::vector<SOCKET> userlist;
@@ -19,7 +19,7 @@ DWORD __stdcall EchoThreadMain(LPVOID CompltetionPortIO)
             auto itr = find(userlist.begin(), userlist.end(), ioInfo->hClntSock);
             userlist.erase(itr);
             ul.unlock();
-            printf_s("[INFO]  Socket() Á¢¼Ó ²÷¾îÁü\n");
+            printf_s("[INFO]  Socket() ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n");
             delete handleInfo;
             continue;
         }
@@ -42,12 +42,12 @@ DWORD __stdcall EchoThreadMain(LPVOID CompltetionPortIO)
             for (auto itr = userlist.begin(); itr != userlist.end(); itr++) {
                  nResult = WSASend(*itr, &(handleInfo->wsabuf), 1, NULL, 0, &(handleInfo->overlapped), NULL);
                  if (nResult == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) {
-                     printf_s("[ERROR]  WSASEND ½ÇÆÐ\n");
+                     printf_s("[ERROR]  WSASEND ï¿½ï¿½ï¿½ï¿½\n");
                  }
             }
             ul.unlock();
             printf("buffer:%s\n", handleInfo->buffer);
-            printf_s("[INFO]  WSASEND ¼º°ø\n");
+            printf_s("[INFO]  WSASEND ï¿½ï¿½ï¿½ï¿½\n");
             handleInfo = new BufferInfo();
             memset(&(handleInfo->overlapped), 0, sizeof(OVERLAPPED));
             handleInfo->wsabuf.len = BUF_SIZE;
