@@ -226,33 +226,57 @@ void ConnectGame() {
 
 
 		while (true) {
+			char temp;
 				char msg[30];
 				int key = KeyControl();
 				switch (key)
 				{
 				case UP:
-					y--;
-					sprintf(msg, "%d:%d", x, y);
-					strLen = strlen(msg);
-					send(hSocket, msg, strLen, 0);
+					temp = map[y-1][x];
+					if (temp != '0')
+					{
+						break;
+					}
+						y--;
+						sprintf(msg, "%d:%d", x, y);
+						strLen = strlen(msg);
+						send(hSocket, msg, strLen, 0);
+					
 					break;
 				case DOWN:
-					y++;
-					sprintf(msg, "%d:%d", x, y);
-					strLen = strlen(msg);
-					send(hSocket, msg, strLen, 0);
+					temp = map[y + 1][x];
+					if (temp!= '0')
+					{
+						break;
+					}
+						y++;
+						sprintf(msg, "%d:%d", x, y);
+						strLen = strlen(msg);
+						send(hSocket, msg, strLen, 0);
+					
 					break;
 				case RIGHT:
-					x++;
-					sprintf(msg, "%d:%d", x, y);
-					strLen = strlen(msg);
-					send(hSocket, msg, strLen, 0);
+					temp = map[y][x + 1];
+					if (temp != '0')
+					{
+						break;
+					}
+						x++;
+						sprintf(msg, "%d:%d", x, y);
+						strLen = strlen(msg);
+						send(hSocket, msg, strLen, 0);
+					
 					break;
 				case LEFT:
-					x--;
-					sprintf(msg, "%d:%d", x, y);
-					strLen = strlen(msg);
-					send(hSocket, msg, strLen, 0);
+					temp = map[y][x - 1];
+					if (temp != '0') {
+						break;
+					}
+						x--;
+						sprintf(msg, "%d:%d", x, y);
+						strLen = strlen(msg);
+						send(hSocket, msg, strLen, 0);
+					
 					break;
 				
 				}
