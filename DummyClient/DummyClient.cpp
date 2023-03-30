@@ -21,7 +21,7 @@ class ServerSession :public Session
 	virtual int32 OnRecv(BYTE* buffer, int32 len) override
 	{
 		cout << "OnRecv Len= " << len << endl;
-		this_thread::sleep_for(1s);
+
 		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
 		sendBuffer->CopyData(sendDataC, sizeof(sendDataC));
 		Send(sendBuffer);

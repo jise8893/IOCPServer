@@ -144,8 +144,7 @@ void Session::DisConnect(const WCHAR* cause)
 	wcout  <<"DisConnected: " << cause << endl;
 
 
-	OnDisConnected(); // 컨텐츠 코드에서 재정의
-	GetService()->ReleaseSession(GetSessionRef());
+	
 
 	RegisterDisconnect();
 }
@@ -219,7 +218,8 @@ bool Session::Connect()
 void Session::ProcessDisconnect()
 {
 	_disconnectEvent.owner = nullptr; // RELEASE_REF
-
+	OnDisConnected(); // 컨텐츠 코드에서 재정의
+	GetService()->ReleaseSession(GetSessionRef());//registerdisconnect 에 두면 cycle이 생겨서 for문을 돌면서 session을 erase하는 오류가 생길 수 있음.
 }
 
 void Session::ProcessRecv(int32 numOfBytes)
