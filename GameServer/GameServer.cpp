@@ -58,8 +58,8 @@ int main()
 		BYTE* buffer = sendBuffer->Buffer();
 		((PacketHeader*)buffer)->size = sizeof(sendData) + sizeof(PacketHeader);
 		((PacketHeader*)buffer)->id = 10;
-		::memcpy(&buffer[4], sendData, sizeof(sendData));
-		sendBuffer->CopyData(sendData, ((PacketHeader*)buffer)->size);
+		
+		sendBuffer->CopyData(sendData, sizeof(sendData));
 		service->BroadCast(sendBuffer);
 		this_thread::sleep_for(1s);
 		
