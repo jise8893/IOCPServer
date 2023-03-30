@@ -16,6 +16,7 @@ public:
 	bool				ClientStarts();
 	IocpCoreRef&		GetIocpCore() { return iocpcore; }
 	SessionRef			CreateSession();
+	void				BroadCast(SendBufferRef sendBuffer);
 	
 protected:
 	set<SessionRef> sessions;

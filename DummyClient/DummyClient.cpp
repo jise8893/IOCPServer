@@ -22,6 +22,8 @@ class ServerSession :public Session
 	{
 		cout << "OnRecv Len= " << len  << endl;
 		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
+		this_thread::sleep_for(1s);
+		
 		sendBuffer->CopyData(sendDataC, sizeof(sendDataC));
 		Send(sendBuffer);
 		return len;

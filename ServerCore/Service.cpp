@@ -2,7 +2,7 @@
 #include "Service.h"
 #include "Listener.h"
 #include "Session.h"
-
+#include "SendBuffer.h"
 
 Service::Service( IocpCoreRef iocpCore,  NetAddress netaddress,SessionFactory factory): netaddr(netaddress),iocpcore(iocpCore),_factory(factory)
 {
@@ -37,7 +37,7 @@ bool Service::Start()
 
 bool Service::ClientStarts()
 {
-	const int sessionCnt = 1;
+	const int sessionCnt = 4;
 	for (int32 i = 0; i < sessionCnt; i++)
 	{
 		SessionRef session = CreateSession();
@@ -57,4 +57,13 @@ SessionRef Service::CreateSession()
 	session->SetService(shared_from_this());
 	iocpcore->Register(session);
 	return session;
+}
+
+void Service::BroadCast(SendBufferRef sendBuffer)
+{
+	WRITE_LOCK;
+	for (SessionRef session : sessions)
+	{
+		session->Send(sendBuffer);
+	}
 }

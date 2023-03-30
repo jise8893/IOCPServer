@@ -22,10 +22,10 @@ public:
 	}
 	virtual int32 OnRecv(BYTE* buffer, int32 len) override
 	{
-		cout << "OnRecv Len= " << len << endl;
+		cout << "OnRecv Len= " << len <<buffer<< endl;
 		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
 		sendBuffer->CopyData(buffer,len);
-		Send(sendBuffer);
+		GetService()->BroadCast(sendBuffer);
 		return len;
 	}
 	virtual void OnSend(int32 len) override
