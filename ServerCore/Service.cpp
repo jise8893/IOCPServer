@@ -37,7 +37,7 @@ bool Service::Start()
 
 bool Service::ClientStarts()
 {
-	const int sessionCnt = 2;
+	const int sessionCnt = 1;
 	for (int32 i = 0; i < sessionCnt; i++)
 	{
 		SessionRef session = CreateSession();
