@@ -18,11 +18,11 @@ public:
 		cout << "Connected To Server" << endl;
 		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
 		sendBuffer->CopyData(sendData, sizeof(sendData));
-		Send(sendBuffer);	
+		GetService()->BroadCast(sendBuffer);
 	}
 	virtual int32 OnRecv(BYTE* buffer, int32 len) override
 	{
-		cout << "OnRecv Len= " << len <<buffer<< endl;
+		cout << "OnRecv Len= " << len << endl;
 		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
 		sendBuffer->CopyData(buffer,len);
 		GetService()->BroadCast(sendBuffer);
@@ -37,7 +37,6 @@ public:
 auto factory = []() {return make_shared<GameSession>(); };
 int main()
 {
-
 	ServiceRef service = make_shared<Service>(make_shared<IocpCore>(), NetAddress(L"127.0.0.1", 7777),factory);
 	service->Start();
 	for (int32 i = 0; i < 5; i++)

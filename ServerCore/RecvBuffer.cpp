@@ -37,7 +37,7 @@ bool RecvBuffer::OnRead(int32 numOfBytes)
 	{
 		return false;
 	}
-	_writePos += numOfBytes;
+	_readPos += numOfBytes;
 	return true;
 }
 

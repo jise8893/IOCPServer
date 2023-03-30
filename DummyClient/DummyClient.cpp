@@ -11,7 +11,7 @@
 #include "Listener.h"
 #include "Session.h"
 #include "SendBuffer.h"
-char sendDataC[] = " hello world";
+char sendDataC[500] = "hello server";
 class ServerSession :public Session
 {
 	virtual void OnConnected() override {
@@ -20,10 +20,9 @@ class ServerSession :public Session
 	}
 	virtual int32 OnRecv(BYTE* buffer, int32 len) override
 	{
-		cout << "OnRecv Len= " << len  << endl;
-		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
+		cout << "OnRecv Len= " << len << endl;
 		this_thread::sleep_for(1s);
-		
+		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
 		sendBuffer->CopyData(sendDataC, sizeof(sendDataC));
 		Send(sendBuffer);
 		return len;
