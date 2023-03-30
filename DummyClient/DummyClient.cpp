@@ -12,19 +12,24 @@
 #include "Session.h"
 #include "SendBuffer.h"
 char sendDataC[] = "hello server";
-class ServerSession :public Session
+class ServerSession :public PacketSession
 {
 	virtual void OnConnected() override {
-		cout << "Connected To Server" << endl;
+		//cout << "Connected To Server" << endl;
 		
 	}
-	virtual int32 OnRecv(BYTE* buffer, int32 len) override
+	virtual int32 OnRecvPacket(BYTE* buffer, int32 len) override
 	{
-		cout << "OnRecv Len= " << len << endl;
-
-		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
-		sendBuffer->CopyData(sendDataC, sizeof(sendDataC));
-		Send(sendBuffer);
+		//cout << "OnRecv Len= " << len << endl;
+		//this_thread::sleep_for(1s);
+		PacketHeader header = *(PacketHeader*)buffer;
+		cout << "Packet ID :" << header.id << " Size: " << header.size << endl;
+		char recvBuffer[4096];
+		::memcpy(recvBuffer, &buffer[4], header.size - sizeof(PacketHeader));
+		cout << recvBuffer << endl;
+		//SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
+		//sendBuffer->CopyData(sendDataC, sizeof(sendDataC));
+		//Send(sendBuffer);
 		return len;
 	}
 	virtual void OnSend(int32 len) override
@@ -39,6 +44,7 @@ int main()
 	this_thread::sleep_for(1s);
 	ServiceRef clientService = make_shared<Service>(make_shared<IocpCore>(), NetAddress(L"127.0.0.1", 7777), factory);
 	ASSERT_CRASH(clientService->ClientStarts())
+	
 	for (int32 i = 0; i < 2; i++)
 	{
 		GThreadManager->Launch([=]()

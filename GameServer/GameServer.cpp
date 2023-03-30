@@ -11,21 +11,21 @@
 #include "Listener.h"
 #include "Session.h"
 #include "SendBuffer.h"
-char sendData[] = "hello world";
-class GameSession :public Session {
+char GsendData[] = "hello world";
+class GameSession :public PacketSession {
 public:
 	virtual void OnConnected() override{
-		cout << "Connected To Server" << endl;
-		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
-		sendBuffer->CopyData(sendData, sizeof(sendData));
-		GetService()->BroadCast(sendBuffer);
+		//cout << "Connected To Server" << endl;
+		//SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
+		//sendBuffer->CopyData(GsendData, sizeof(GsendData));
+		//GetService()->BroadCast(sendBuffer);
 	}
-	virtual int32 OnRecv(BYTE* buffer, int32 len) override
+	virtual int32 OnRecvPacket(BYTE* buffer, int32 len) override
 	{
-		cout << "OnRecv Len= " << len << endl;
-		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
-		sendBuffer->CopyData(buffer,len);
-		GetService()->BroadCast(sendBuffer);
+		//cout << "OnRecv Len= " << len << endl;
+		PacketHeader header = *(PacketHeader*)buffer;
+		cout << "Packet ID :" << header.id << " Size: " << header.size << endl;
+		
 		return len;
 	}
 	virtual void OnSend(int32 len) override
@@ -48,6 +48,21 @@ int main()
 					service->GetIocpCore()->Dispatch();
 				}
 			});
+	}
+	
+	char sendData[] = "hello world";
+	while (true)
+	{
+		
+		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
+		BYTE* buffer = sendBuffer->Buffer();
+		((PacketHeader*)buffer)->size = sizeof(sendData) + sizeof(PacketHeader);
+		((PacketHeader*)buffer)->id = 10;
+		::memcpy(&buffer[4], sendData, sizeof(sendData));
+		sendBuffer->CopyData(sendData, ((PacketHeader*)buffer)->size);
+		service->BroadCast(sendBuffer);
+		this_thread::sleep_for(1s);
+		
 	}
 	GThreadManager->Join();
 }

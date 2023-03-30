@@ -64,6 +64,7 @@ void Service::BroadCast(SendBufferRef sendBuffer)
 	WRITE_LOCK;
 	for (SessionRef session : sessions)
 	{
+		
 		session->Send(sendBuffer);
 	}
 }

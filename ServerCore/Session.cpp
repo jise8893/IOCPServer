@@ -126,12 +126,16 @@ bool Session::RegisterConnect()
 
 void Session::Send(SendBufferRef sendBuffer)
 {
+	bool registerSend = false;
 	//register send가 걸리지 않았다면 걸어준다.
+	{
+		WRITE_LOCK;
+		_sendQueue.push(sendBuffer);
 
-	WRITE_LOCK;
-	_sendQueue.push(sendBuffer);
-	
-	if (_sendRegistered.exchange(true) == false)
+		if (_sendRegistered.exchange(true) == false)
+			registerSend = true;
+	}
+	if(registerSend)
 		RegisterSend();
 }
 
@@ -266,4 +270,36 @@ void Session::ProcessSend(int32 numOfBytes)
 		_sendRegistered.store(false);
 	else
 		RegisterSend();
+}
+
+PacketSession::PacketSession()
+{
+
+}
+
+PacketSession::~PacketSession()
+{
+
+}
+//[size][id][data ....][size2][id2][data...]
+int32 PacketSession::OnRecv(BYTE* buffer, int32 len)
+{
+	int32 processLen=0;
+	while (true)
+	{
+		int32 dataSize = len-processLen;
+		//최소한 헤더는 파싱할 수 있어야 함
+		if (dataSize < sizeof(PacketHeader))
+			break;
+
+		PacketHeader header = *(reinterpret_cast<PacketHeader*>(&buffer[0]));
+		//헤더에 기록된 패킷 크기를 파싱할 수 있어야 함
+		if (dataSize < header.size)
+			break;
+
+		//패킷 조립 가능
+		OnRecvPacket(&buffer[0], header.size);
+		processLen += header.size;
+	}
+	return processLen;
 }
