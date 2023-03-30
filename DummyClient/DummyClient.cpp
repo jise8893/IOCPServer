@@ -11,7 +11,7 @@
 #include "Listener.h"
 #include "Session.h"
 #include "SendBuffer.h"
-char sendDataC[500] = "hello server";
+char sendDataC[] = "hello server";
 class ServerSession :public Session
 {
 	virtual void OnConnected() override {
