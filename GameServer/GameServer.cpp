@@ -25,7 +25,7 @@ public:
 		//cout << "OnRecv Len= " << len << endl;
 		PacketHeader header = *(PacketHeader*)buffer;
 		cout << "Packet ID :" << header.id << " Size: " << header.size << endl;
-		
+		GetService()->BroadCast(ServerPacketHandler::HandlerPacket(buffer,len));
 		return len;
 	}
 	virtual void OnSend(int32 len) override
@@ -51,13 +51,12 @@ int main()
 	}
 	
 	
-	while (true)
-	{
+	
 		
-		SendBufferRef sendBuffer = ServerPacketHandler::MakeMoveTo();
-		service->BroadCast(sendBuffer);
-		this_thread::sleep_for(250ms);
+		//SendBufferRef sendBuffer = ServerPacketHandler::MakeMoveTo(3,4);
+		//service->BroadCast(sendBuffer);
+		//this_thread::sleep_for(250ms);
 		
-	}
+	
 	GThreadManager->Join();
 }

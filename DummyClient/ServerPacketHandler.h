@@ -10,7 +10,7 @@ class ServerPacketHandler
 public:
 	static SendBufferRef MakeS_Test();
 	static SendBufferRef MakeMoveTo(uint32 x, uint32 y);
-	static SendBufferRef HandlerPacket(BYTE* buffer, int32 len);
+	static void HandlerPacket(BYTE* buffer, int32 len);
 
 };
 

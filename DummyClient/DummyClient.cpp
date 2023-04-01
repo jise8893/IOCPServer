@@ -12,6 +12,7 @@
 #include "Session.h"
 #include "SendBuffer.h"
 #include "ClientPacektHandler.h"
+#include "ServerPacketHandler.h"
 char sendDataC[] = "hello server";
 class ServerSession :public PacketSession
 {
@@ -46,6 +47,14 @@ int main()
 					clientService->GetIocpCore()->Dispatch();
 				}
 			});
+	}
+	int a, b;
+	while (true)
+	{
+		a = b = 0;
+		scanf_s("%d %d", &a, &b);
+		SendBufferRef sendBuffer = ServerPacketHandler::MakeMoveTo(a, b);
+		clientService->BroadCast(sendBuffer);
 	}
 	GThreadManager->Join();
 

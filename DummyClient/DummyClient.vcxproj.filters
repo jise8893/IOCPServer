@@ -16,11 +16,13 @@
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="ClientPacektHandler.cpp" />
+    <ClCompile Include="ServerPacketHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="ClientPacektHandler.h" />
+    <ClInclude Include="ServerPacketHandler.h" />
   </ItemGroup>
 </Project>
