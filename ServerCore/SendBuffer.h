@@ -10,7 +10,7 @@ public:
 	int32 WritePos() { return _writeSize; }
 	int32 Capacity() { return static_cast<int32>(_buffer.size()); }
 	
-	void CopyData(void* data, int32 len);
+	void CopyData( int32 len);
 
 private:
 	vector<BYTE> _buffer;

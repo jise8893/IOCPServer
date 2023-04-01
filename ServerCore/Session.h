@@ -4,6 +4,7 @@
 #include "IocpEvent.h"
 #include <functional>
 #include "RecvBuffer.h"
+#include "PacketMsg.h"
 #include <queue>
 
 class Session :public IocpObject
@@ -66,11 +67,7 @@ private:
 	SendEvent			_sendEvent;
 	
 };
-struct PacketHeader
-{
-	uint16 size;
-	uint16 id; //프로토콜 id (ex id=1 로그인 2 이동요청)
-};
+
 //[size][id][data ....][size2][id2][data...]
 
 class PacketSession :public Session

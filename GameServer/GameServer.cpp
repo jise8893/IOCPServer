@@ -11,7 +11,7 @@
 #include "Listener.h"
 #include "Session.h"
 #include "SendBuffer.h"
-char GsendData[] = "hello world";
+#include "ServerPacketHandler.h"
 class GameSession :public PacketSession {
 public:
 	virtual void OnConnected() override{
@@ -50,18 +50,13 @@ int main()
 			});
 	}
 	
-	char sendData[] = "hello world";
+	
 	while (true)
 	{
 		
-		SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
-		BYTE* buffer = sendBuffer->Buffer();
-		((PacketHeader*)buffer)->size = sizeof(sendData) + sizeof(PacketHeader);
-		((PacketHeader*)buffer)->id = 10;
-		
-		sendBuffer->CopyData(sendData, sizeof(sendData));
+		SendBufferRef sendBuffer = ServerPacketHandler::MakeMoveTo();
 		service->BroadCast(sendBuffer);
-		this_thread::sleep_for(1s);
+		this_thread::sleep_for(250ms);
 		
 	}
 	GThreadManager->Join();

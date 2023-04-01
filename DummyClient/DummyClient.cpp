@@ -11,6 +11,7 @@
 #include "Listener.h"
 #include "Session.h"
 #include "SendBuffer.h"
+#include "ClientPacektHandler.h"
 char sendDataC[] = "hello server";
 class ServerSession :public PacketSession
 {
@@ -20,16 +21,7 @@ class ServerSession :public PacketSession
 	}
 	virtual int32 OnRecvPacket(BYTE* buffer, int32 len) override
 	{
-		//cout << "OnRecv Len= " << len << endl;
-		//this_thread::sleep_for(1s);
-		PacketHeader header = *(PacketHeader*)buffer;
-		cout << "Packet ID :" << header.id << " Size: " << header.size << endl;
-		char recvBuffer[4096];
-		::memcpy(recvBuffer, &buffer[4], header.size - sizeof(PacketHeader));
-		cout << recvBuffer << endl;
-		//SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
-		//sendBuffer->CopyData(sendDataC, sizeof(sendDataC));
-		//Send(sendBuffer);
+		ClientPacektHandler::HandlerPacket(buffer, len);
 		return len;
 	}
 	virtual void OnSend(int32 len) override

@@ -66,6 +66,7 @@
     <ClInclude Include="SendBuffer.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="PacketMsg.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -113,5 +114,6 @@
     <ClCompile Include="SendBuffer.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="PacketMsg.cpp" />
   </ItemGroup>
 </Project>
