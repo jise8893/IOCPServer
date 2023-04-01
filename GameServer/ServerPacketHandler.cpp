@@ -7,7 +7,6 @@ char sendData[] = "hello my world";
 SendBufferRef ServerPacketHandler::MakeS_Test()
 {
 	SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
-	BYTE* buffer = sendBuffer->Buffer();
 	PacketMsg_S_TEST* data = (PacketMsg_S_TEST*)(sendBuffer->Buffer());
 	data->id = 1;
 	data->size = sizeof(sendData) + sizeof(PacketHeader);
@@ -20,7 +19,6 @@ SendBufferRef ServerPacketHandler::MakeS_Test()
 SendBufferRef ServerPacketHandler::MakeMoveTo()
 {
 	SendBufferRef sendBuffer = make_shared<SendBuffer>(4096);
-	BYTE* buffer = sendBuffer->Buffer();
 	PacketMsgMoveTo* data = (PacketMsgMoveTo*)(sendBuffer->Buffer());
 	data->id = 2;
 	data->size =  sizeof(PacketMsgMoveTo);
